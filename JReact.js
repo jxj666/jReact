@@ -98,13 +98,13 @@ export class Component {
           return false;
         }
         for (let name in node1.props) {
-          if (
-            typeof node1.props[name] === "function" &&
-            typeof node2.props[name] === "function" &&
-            node1.props[name].toString() === node2.props[name].toString()
-          ) {
-            continue;
-          }
+          // if (
+          //   typeof node1.props[name] === "function" &&
+          //   typeof node2.props[name] === "function" &&
+          //   node1.props[name].toString() === node2.props[name].toString()
+          // ) {
+          //   continue;
+          // }
           if (
             typeof node1.props[name] === "object" &&
             typeof node2.props[name] === "object" &&
@@ -192,7 +192,7 @@ export class Component {
   }
 }
 
-// react
+// React
 export const JReact = {
   // Babel 会把 JSX 转译成一个名为 React.createElement() 的函数调用。
   createElement(type, attributes, ...children) {
@@ -232,21 +232,21 @@ export const JReact = {
   },
   // 源码位置：packages/react-dom/src/client/ReactDOM.js
   // render: function (element, container, callback) {
-  render(vdom, element) {
+  render(element, continer) {
     // 返回一个 Range 对象
     // Range 接口表示一个包含节点与文本节点的一部分的文档片段
     let range = document.createRange();
-    if (element.children.length) {
+    if (continer.children.length) {
       // Range.setStartAfter()
       // 以其它节点为基准，设置 Range 的起点。
-      range.setStartAfter(element.lastChild);
+      range.setStartAfter(continer.lastChild);
       // Range.setEndAfter()
       // 以其它节点为基准，设置 Range 的终点。
-      range.setEndAfter(element.lastChild);
+      range.setEndAfter(continer.lastChild);
     } else {
-      range.setStart(element, 0);
-      range.setEnd(element, 0);
+      range.setStart(continer, 0);
+      range.setEnd(continer, 0);
     }
-    vdom.mountTo(range);
+    element.mountTo(range);
   },
 };
