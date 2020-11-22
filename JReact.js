@@ -1,4 +1,6 @@
 let childrenSymbol = Symbol('children');
+
+// 宿主组件（如div，span等）
 class ElementWrapper {
   constructor(type) {
     this.type = type;
@@ -71,6 +73,7 @@ class TextWrapper {
   }
 }
 
+// React 组件元素
 export class Component {
   constructor() {
     this.children = [];
@@ -95,11 +98,11 @@ export class Component {
           return false;
         }
         for (let name in node1.props) {
-          // if (typeof node1.props[name] === "function"
-          //   && typeof node2.props[name] === "function"
-          //   && node1.props[name].toString() === node2.props[name].toString()) {
-          //   continue;
-          // }
+          if (typeof node1.props[name] === "function"
+            && typeof node2.props[name] === "function"
+            && node1.props[name].toString() === node2.props[name].toString()) {
+            continue;
+          }
           if (typeof node1.props[name] === "object"
             && typeof node2.props[name] === "object"
             && JSON.stringify(node1.props[name]) === JSON.stringify(node2.props[name])) {
@@ -144,7 +147,7 @@ export class Component {
           }
         }
       }
-      replace(vdom, this.oldVdom, '');
+       replace(vdom, this.oldVdom, '');
     } else {
       vdom.mountTo(this.range);
     }
@@ -177,10 +180,12 @@ export class Component {
       this.state = {};
     }
     merge(this.state, state);
+    console.log(this.state)
     this.update();
   }
 }
 
+// react
 export const JReact = {
   createElement(type, attributes, ...children) {
     let element;
