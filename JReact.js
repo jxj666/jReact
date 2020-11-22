@@ -231,6 +231,7 @@ export const JReact = {
       }
     };
     insertChildren(children);
+    console.log('element',element)
     return element;
   },
   // 源码位置：packages/react-dom/src/client/ReactDOM.js
