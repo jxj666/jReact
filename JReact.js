@@ -55,7 +55,7 @@ class ElementWrapper {
     range.insertNode(element);
   }
 }
-// 宿主组件 (test)
+// 宿主组件 (text)
 class TextWrapper {
   constructor(content) {
     this.root = document.createTextNode(content);
@@ -195,7 +195,10 @@ export class Component {
 // React
 export const JReact = {
   // Babel 会把 JSX 转译成一个名为 React.createElement() 的函数调用。
+  // <h1 id=“myid” class=“myclass”>我是帅哥</h1>
+  // const myh1=React.createElement("h1",{id:"myid",class:"myclass"},"我是帅哥")
   createElement(type, attributes, ...children) {
+    console.log('createElement',type, attributes, ...children);
     let element;
     if (typeof type === "string") {
       element = new ElementWrapper(type);
