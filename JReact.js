@@ -1,4 +1,4 @@
-let childrenSymbol = Symbol('children');
+let childrenSymbol = Symbol("children");
 
 // 宿主组件（如div，span等）
 class ElementWrapper {
@@ -16,7 +16,7 @@ class ElementWrapper {
   // }
   appendChild(vchild) {
     this[childrenSymbol].push(vchild);
-    this.children.push(vchild.vdom)
+    this.children.push(vchild.vdom);
   }
   get vdom() {
     return this;
@@ -33,7 +33,7 @@ class ElementWrapper {
     for (let name in this.props) {
       let value = this.props[name];
       if (name.match(/^on([\s\S]+)$/)) {
-        let eventName = RegExp.$1.replace(/^[\s\S]/, s => s.toLowerCase());
+        let eventName = RegExp.$1.replace(/^[\s\S]/, (s) => s.toLowerCase());
         element.addEventListener(eventName, value);
       }
       if (name === "className") {
@@ -55,11 +55,11 @@ class ElementWrapper {
     range.insertNode(element);
   }
 }
-
+// 宿主组件 (test)
 class TextWrapper {
   constructor(content) {
     this.root = document.createTextNode(content);
-    this.type = '#text';
+    this.type = "#text";
     this.children = [];
     this.props = Object.create(null);
   }
@@ -98,25 +98,32 @@ export class Component {
           return false;
         }
         for (let name in node1.props) {
-          if (typeof node1.props[name] === "function"
-            && typeof node2.props[name] === "function"
-            && node1.props[name].toString() === node2.props[name].toString()) {
+          if (
+            typeof node1.props[name] === "function" &&
+            typeof node2.props[name] === "function" &&
+            node1.props[name].toString() === node2.props[name].toString()
+          ) {
             continue;
           }
-          if (typeof node1.props[name] === "object"
-            && typeof node2.props[name] === "object"
-            && JSON.stringify(node1.props[name]) === JSON.stringify(node2.props[name])) {
+          if (
+            typeof node1.props[name] === "object" &&
+            typeof node2.props[name] === "object" &&
+            JSON.stringify(node1.props[name]) ===
+              JSON.stringify(node2.props[name])
+          ) {
             continue;
           }
           if (node1.props[name] !== node2.props[name]) {
             return false;
           }
         }
-        if (Object.keys(node1.props).length !== Object.keys(node2.props).length) {
+        if (
+          Object.keys(node1.props).length !== Object.keys(node2.props).length
+        ) {
           return false;
         }
         return true;
-      }
+      };
       const isSameTree = (node1, node2) => {
         if (!isSameNode(node1, node2)) {
           return false;
@@ -132,8 +139,8 @@ export class Component {
         return true;
       };
       const replace = (newTree, oldTree, indent) => {
-        console.log(indent + 'new:', newTree);
-        console.log(indent + 'old:', oldTree);
+        console.log(indent + "new:", newTree);
+        console.log(indent + "old:", oldTree);
         if (isSameTree(newTree, oldTree)) {
           console.log("all the same");
           return;
@@ -143,11 +150,11 @@ export class Component {
           newTree.mountTo(oldTree.range);
         } else {
           for (let i = 0; i < newTree.children.length; i++) {
-            replace(newTree.children[i], oldTree.children[i], '  ' + indent);
+            replace(newTree.children[i], oldTree.children[i], "  " + indent);
           }
         }
-      }
-       replace(vdom, this.oldVdom, '');
+      };
+      replace(vdom, this.oldVdom, "");
     } else {
       vdom.mountTo(this.range);
     }
@@ -180,16 +187,17 @@ export class Component {
       this.state = {};
     }
     merge(this.state, state);
-    console.log(this.state)
+    console.log(this.state);
     this.update();
   }
 }
 
 // react
 export const JReact = {
+  // Babel 会把 JSX 转译成一个名为 React.createElement() 的函数调用。
   createElement(type, attributes, ...children) {
     let element;
-    if (typeof type === 'string') {
+    if (typeof type === "string") {
       element = new ElementWrapper(type);
     } else {
       element = new type();
@@ -200,14 +208,15 @@ export const JReact = {
     const insertChildren = (children) => {
       for (let child of children) {
         if (typeof child === "object" && child instanceof Array) {
-          insertChildren(child)
+          insertChildren(child);
         } else {
           if (child === null || child === void 0) {
             child = "";
           }
-          if (!(child instanceof Component)
-            && !(child instanceof ElementWrapper)
-            && !(child instanceof TextWrapper)
+          if (
+            !(child instanceof Component) &&
+            !(child instanceof ElementWrapper) &&
+            !(child instanceof TextWrapper)
           ) {
             child = String(child);
           }
@@ -217,19 +226,27 @@ export const JReact = {
           element.appendChild(child);
         }
       }
-    }
+    };
     insertChildren(children);
     return element;
   },
+  // 源码位置：packages/react-dom/src/client/ReactDOM.js
+  // render: function (element, container, callback) {
   render(vdom, element) {
+    // 返回一个 Range 对象
+    // Range 接口表示一个包含节点与文本节点的一部分的文档片段
     let range = document.createRange();
     if (element.children.length) {
+      // Range.setStartAfter()
+      // 以其它节点为基准，设置 Range 的起点。
       range.setStartAfter(element.lastChild);
+      // Range.setEndAfter()
+      // 以其它节点为基准，设置 Range 的终点。
       range.setEndAfter(element.lastChild);
     } else {
       range.setStart(element, 0);
       range.setEnd(element, 0);
     }
     vdom.mountTo(range);
-  }
-}
+  },
+};

@@ -123,7 +123,7 @@ class Game extends Component {
   }
 }
 
-
+// ReactDOM.render函数是整个 React 应用程序首次渲染的入口函数
 JReact.render(<Game />, document.body);
 
 
