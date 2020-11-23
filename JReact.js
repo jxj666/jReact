@@ -198,7 +198,7 @@ export const JReact = {
   // <h1 id=“myid” class=“myclass”>我是帅哥</h1>
   // const myh1=React.createElement("h1",{id:"myid",class:"myclass"},"我是帅哥")
   createElement(type, attributes, ...children) {
-    console.log('createElement',type, attributes, ...children);
+    // console.log('createElement',type, attributes, ...children);
     let element;
     if (typeof type === "string") {
       element = new ElementWrapper(type);
@@ -231,7 +231,7 @@ export const JReact = {
       }
     };
     insertChildren(children);
-    console.log('element',element)
+    // console.log('element',element)
     return element;
   },
   // 源码位置：packages/react-dom/src/client/ReactDOM.js
