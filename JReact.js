@@ -11,9 +11,9 @@ class ElementWrapper {
   setAttribute(name, value) {
     this.props[name] = value;
   }
-  // get children() {
-  //   return this.children.map(child => child.vdom);
-  // }
+  getChildren() {
+    return this.children.map((child) => child.vdom);
+  }
   appendChild(vchild) {
     this[childrenSymbol].push(vchild);
     this.children.push(vchild.vdom);
@@ -23,6 +23,7 @@ class ElementWrapper {
   }
   mountTo(range) {
     this.range = range;
+    // createComment() 方法用来创建并返回一个注释节点.
     let placeholder = document.createComment("placeholder");
     let endRange = document.createRange();
     endRange.setStart(range.endContainer, range.endOffset);
@@ -32,14 +33,19 @@ class ElementWrapper {
     let element = document.createElement(this.type);
     for (let name in this.props) {
       let value = this.props[name];
+      //添加绑定事件
       if (name.match(/^on([\s\S]+)$/)) {
         let eventName = RegExp.$1.replace(/^[\s\S]/, (s) => s.toLowerCase());
         element.addEventListener(eventName, value);
       }
-      if (name === "className") {
+      //添加class
+      else if (name === "className") {
         element.setAttribute("class", value);
       }
-      element.setAttribute(name, value);
+      //添加属性
+      else {
+        element.setAttribute(name, value);
+      }
     }
     for (let child of this.children) {
       let range = document.createRange();
@@ -65,7 +71,9 @@ class TextWrapper {
   }
   mountTo(range) {
     this.range = range;
+    // 从文档中移除 Range 包含的内容。
     range.deleteContents();
+    // 在 Range 的起点处插入一个节点。
     range.insertNode(this.root);
   }
   get vdom() {
@@ -98,13 +106,6 @@ export class Component {
           return false;
         }
         for (let name in node1.props) {
-          // if (
-          //   typeof node1.props[name] === "function" &&
-          //   typeof node2.props[name] === "function" &&
-          //   node1.props[name].toString() === node2.props[name].toString()
-          // ) {
-          //   continue;
-          // }
           if (
             typeof node1.props[name] === "object" &&
             typeof node2.props[name] === "object" &&
@@ -118,6 +119,7 @@ export class Component {
           }
         }
         if (
+          // Object.keys() 方法会返回一个由一个给定对象的自身可枚举属性组成的数组，数组中属性名的排列顺序和正常循环遍历该对象时返回的顺序一致 。
           Object.keys(node1.props).length !== Object.keys(node2.props).length
         ) {
           return false;
@@ -155,6 +157,7 @@ export class Component {
         }
       };
       replace(vdom, this.oldVdom, "");
+      this.oldVdom = vdom;
     } else {
       vdom.mountTo(this.range);
     }
@@ -187,7 +190,6 @@ export class Component {
       this.state = {};
     }
     merge(this.state, state);
-    console.log(this.state);
     this.update();
   }
 }
@@ -198,8 +200,9 @@ export const JReact = {
   // <h1 id=“myid” class=“myclass”>我是帅哥</h1>
   // const myh1=React.createElement("h1",{id:"myid",class:"myclass"},"我是帅哥")
   createElement(type, attributes, ...children) {
-    // console.log('createElement',type, attributes, ...children);
+    // console.log("createElement", arguments);
     let element;
+    // 如果 jsx 标签是小写的(原生)，那么这里的第一个参数是个字符串不是变量
     if (typeof type === "string") {
       element = new ElementWrapper(type);
     } else {
@@ -231,7 +234,7 @@ export const JReact = {
       }
     };
     insertChildren(children);
-    // console.log('element',element)
+    // console.log("element", element);
     return element;
   },
   // 源码位置：packages/react-dom/src/client/ReactDOM.js
