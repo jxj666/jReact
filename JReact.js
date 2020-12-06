@@ -99,69 +99,51 @@ export class Component {
     this.update();
   }
   update() {
-    let vdom = this.vdom;
+    let vdom = this.vdom
     if (this.oldVdom) {
-      const isSameNode = (node1, node2) => {
-        if (node1.type !== node2.type) {
-          return false;
-        }
+      let isSameNode = (node1, node2) => {
+        if (node1.type !== node2.type)
+          return false
         for (let name in node1.props) {
-          if (
-            typeof node1.props[name] === "object" &&
-            typeof node2.props[name] === "object" &&
-            JSON.stringify(node1.props[name]) ===
-              JSON.stringify(node2.props[name])
-          ) {
-            continue;
-          }
-          if (node1.props[name] !== node2.props[name]) {
-            return false;
-          }
+  
+          if (typeof node1.props[name] === "object" && typeof node2.props[name] === 'object' &&
+            JSON.stringify(node1.props[name]) === JSON.stringify(node2.props[name]))
+            continue
+          if (node1.props[name] !== node2.props[name])
+            return false
         }
-        if (
-          // Object.keys() 方法会返回一个由一个给定对象的自身可枚举属性组成的数组，数组中属性名的排列顺序和正常循环遍历该对象时返回的顺序一致 。
-          Object.keys(node1.props).length !== Object.keys(node2.props).length
-        ) {
-          return false;
-        }
-        return true;
-      };
-      const isSameTree = (node1, node2) => {
-        if (!isSameNode(node1, node2)) {
-          return false;
-        }
-        if (node1.children.length !== node2.children.length) {
-          return false;
-        }
+        if (Object.keys(node1.props).length !== Object.keys(node2.props).length)
+          return false
+  
+        return true
+      }
+  
+      let isSameTree = (node1, node2) => {
+        if (!isSameNode(node1, node2))
+          return false
+        if (node1.children.length !== node2.children.length)
+          return false
         for (let i = 0; i < node1.children.length; i++) {
-          if (!isSameTree(node1.children[i], node2.children[i])) {
-            return false;
-          }
+          if (!isSameTree(node1.children[i], node2.children[i]))
+            return false
         }
-        return true;
-      };
-      const replace = (newTree, oldTree, indent) => {
-        console.log(indent + "new:", newTree);
-        console.log(indent + "old:", oldTree);
-        if (isSameTree(newTree, oldTree)) {
-          console.log("all the same");
-          return;
-        }
+        return true
+      }
+      let replace = (newTree, oldTree) => {
+        if (isSameTree(newTree, oldTree)) return
         if (!isSameNode(newTree, oldTree)) {
-          console.log("all different");
-          newTree.mountTo(oldTree.range);
+          newTree.mountTo(oldTree.range)
         } else {
           for (let i = 0; i < newTree.children.length; i++) {
-            replace(newTree.children[i], oldTree.children[i], "  " + indent);
+            replace(newTree.children[i], oldTree.children[i])
           }
         }
-      };
-      replace(vdom, this.oldVdom, "");
-      this.oldVdom = vdom;
+      }
+      replace(vdom, this.oldVdom)
     } else {
-      vdom.mountTo(this.range);
+      vdom.mountTo(this.range)
     }
-    this.oldVdom = vdom;
+    this.oldVdom = vdom
   }
   get vdom() {
     return this.render().vdom;
@@ -237,6 +219,7 @@ export const JReact = {
     // console.log("element", element);
     return element;
   },
+  // 主要原因是 jsx 是一个混合内容，组件和 HTML 是并存的，如果不是 HTML 的元素的话，无法使用 document.body.appendChild 
   // 源码位置：packages/react-dom/src/client/ReactDOM.js
   // render: function (element, container, callback) {
   render(element, continer) {
@@ -254,6 +237,7 @@ export const JReact = {
       range.setStart(continer, 0);
       range.setEnd(continer, 0);
     }
+
     element.mountTo(range);
   },
 };
