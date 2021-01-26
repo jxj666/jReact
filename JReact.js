@@ -8,20 +8,20 @@ class ElementWrapper {
     this[childrenSymbol] = [];
     this.children = [];
   }
-  setAttribute(name, value) {
+  setAttribute (name, value) {
     this.props[name] = value;
   }
   // get children() {
   //   return this.children.map(child => child.vdom);
   // }
-  appendChild(vchild) {
+  appendChild (vchild) {
     this[childrenSymbol].push(vchild);
     this.children.push(vchild.vdom);
   }
-  get vdom() {
+  get vdom () {
     return this;
   }
-  mountTo(range) {
+  mountTo (range) {
     this.range = range;
     let placeholder = document.createComment("placeholder");
     let endRange = document.createRange();
@@ -53,6 +53,10 @@ class ElementWrapper {
       child.mountTo(range);
     }
     range.insertNode(element);
+
+  }
+  update () {
+
   }
 }
 // 宿主组件 (text)
@@ -63,12 +67,12 @@ class TextWrapper {
     this.children = [];
     this.props = Object.create(null);
   }
-  mountTo(range) {
+  mountTo (range) {
     this.range = range;
     range.deleteContents();
     range.insertNode(this.root);
   }
-  get vdom() {
+  get vdom () {
     return this;
   }
 }
@@ -79,37 +83,33 @@ export class Component {
     this.children = [];
     this.props = Object.create(null);
   }
-  get type() {
+  get type () {
     return this.constructor.name;
   }
-  setAttribute(name, value) {
+  setAttribute (name, value) {
     this.props[name] = value;
     this[name] = value;
   }
-  mountTo(range) {
+  mountTo (range) {
     this.range = range;
     this.update();
   }
-  update() {
+  update () {
     let vdom = this.vdom;
     if (this.oldVdom) {
       const isSameNode = (node1, node2) => {
+        if (!node1 || !node2) {
+          return false
+        }
         if (node1.type !== node2.type) {
           return false;
         }
         for (let name in node1.props) {
-          // if (
-          //   typeof node1.props[name] === "function" &&
-          //   typeof node2.props[name] === "function" &&
-          //   node1.props[name].toString() === node2.props[name].toString()
-          // ) {
-          //   continue;
-          // }
           if (
             typeof node1.props[name] === "object" &&
             typeof node2.props[name] === "object" &&
             JSON.stringify(node1.props[name]) ===
-              JSON.stringify(node2.props[name])
+            JSON.stringify(node2.props[name])
           ) {
             continue;
           }
@@ -139,14 +139,17 @@ export class Component {
         return true;
       };
       const replace = (newTree, oldTree, indent) => {
-        console.log(indent + "new:", newTree);
-        console.log(indent + "old:", oldTree);
+        // console.log(indent + "new:", newTree);
+        // console.log(indent + "old:", oldTree);
+        if (!newTree || !oldTree) {
+          return;
+        }
         if (isSameTree(newTree, oldTree)) {
-          console.log("all the same");
+          // console.log("all the same");
           return;
         }
         if (!isSameNode(newTree, oldTree)) {
-          console.log("all different");
+          // console.log("all different");
           newTree.mountTo(oldTree.range);
         } else {
           for (let i = 0; i < newTree.children.length; i++) {
@@ -160,13 +163,13 @@ export class Component {
     }
     this.oldVdom = vdom;
   }
-  get vdom() {
+  get vdom () {
     return this.render().vdom;
   }
-  appendChild(vchild) {
+  appendChild (vchild) {
     return this.children.push(vchild);
   }
-  setState(state) {
+  setState (state) {
     const merge = (oldState, newState) => {
       for (let p in newState) {
         if (typeof newState[p] === "object" && newState[p] !== null) {
@@ -187,7 +190,7 @@ export class Component {
       this.state = {};
     }
     merge(this.state, state);
-    console.log(this.state);
+    // console.log(this.state);
     this.update();
   }
 }
@@ -197,7 +200,7 @@ export const JReact = {
   // Babel 会把 JSX 转译成一个名为 React.createElement() 的函数调用。
   // <h1 id=“myid” class=“myclass”>我是帅哥</h1>
   // const myh1=React.createElement("h1",{id:"myid",class:"myclass"},"我是帅哥")
-  createElement(type, attributes, ...children) {
+  createElement (type, attributes, ...children) {
     // console.log('createElement',type, attributes, ...children);
     let element;
     if (typeof type === "string") {
@@ -236,7 +239,7 @@ export const JReact = {
   },
   // 源码位置：packages/react-dom/src/client/ReactDOM.js
   // render: function (element, container, callback) {
-  render(element, continer) {
+  render (element, continer) {
     // 返回一个 Range 对象
     // Range 接口表示一个包含节点与文本节点的一部分的文档片段
     let range = document.createRange();

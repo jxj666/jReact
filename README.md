@@ -1,8 +1,8 @@
 <!--
  * @Author: 靳肖健
  * @Date: 2020-11-22 21:48:11
- * @LastEditors: 靳肖健
- * @LastEditTime: 2020-11-22 22:22:05
+ * @LastEditors: jinxiaojian
+ * @LastEditTime: 2021-01-26 15:22:19
  * @Description: //jxjweb.top
 -->
 # JReact
@@ -18,4 +18,4 @@ npm run build
 npm run server
 `
 
-### 本项目根据 课程 手把手带你实现ToyReact框架 习作
+### 本项目根据 课程 手把手带你实现ToyReact框架
