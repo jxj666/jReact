@@ -201,7 +201,7 @@ export const JReact = {
   // <h1 id=“myid” class=“myclass”>我是帅哥</h1>
   // const myh1=React.createElement("h1",{id:"myid",class:"myclass"},"我是帅哥")
   createElement (type, attributes, ...children) {
-    // console.log('createElement',type, attributes, ...children);
+    console.log('createElement', arguments);
     let element;
     if (typeof type === "string") {
       element = new ElementWrapper(type);
@@ -234,25 +234,25 @@ export const JReact = {
       }
     };
     insertChildren(children);
-    // console.log('element',element)
     return element;
   },
   // 源码位置：packages/react-dom/src/client/ReactDOM.js
   // render: function (element, container, callback) {
-  render (element, continer) {
+  render (element, container) {
+    console.log('render', arguments)
     // 返回一个 Range 对象
     // Range 接口表示一个包含节点与文本节点的一部分的文档片段
     let range = document.createRange();
-    if (continer.children.length) {
+    if (container.children.length) {
       // Range.setStartAfter()
       // 以其它节点为基准，设置 Range 的起点。
-      range.setStartAfter(continer.lastChild);
+      range.setStartAfter(container.lastChild);
       // Range.setEndAfter()
       // 以其它节点为基准，设置 Range 的终点。
-      range.setEndAfter(continer.lastChild);
+      range.setEndAfter(container.lastChild);
     } else {
-      range.setStart(continer, 0);
-      range.setEnd(continer, 0);
+      range.setStart(container, 0);
+      range.setEnd(container, 0);
     }
     element.mountTo(range);
   },
